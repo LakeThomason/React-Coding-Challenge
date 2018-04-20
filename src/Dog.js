@@ -6,6 +6,14 @@ class Dog extends Component {
     this.state = {
       dogImage: null,
     }
+    this.imageStyle = {
+      height: 250
+    }
+    this.divStyle = {
+      width: 500,
+      display: "flex",
+      justifyContent: "center"
+    }
   }
 
   componentDidMount() {
@@ -16,7 +24,7 @@ class Dog extends Component {
     .then(data => {
       let image = (
           <div key={data.message}>
-            <img src={data.message} alt={this.props.name}/>
+            <img src={data.message} alt={this.props.name} style={this.imageStyle}/>
           </div>
         )
       this.setState({dogImage: image});
@@ -28,7 +36,7 @@ class Dog extends Component {
 
   render() {
     return (
-      <div key={this.props.name}>
+      <div key={this.props.name} style={this.divStyle}>
         {this.state.dogImage}
       </div>
     );
