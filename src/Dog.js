@@ -1,45 +1,53 @@
 import React, { Component } from 'react';
+import defaultDog from './defaultDog.png';
+
+const imgHeight = 275;
+const imgPad = 20;
 
 class Dog extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dogImage: null,
-    }
-    this.imageStyle = {
-      height: 250
-    }
-    this.divStyle = {
-      width: 500,
-      display: "flex",
-      justifyContent: "center"
+      dogImageUrl: defaultDog,
+      imageWidth: null
     }
   }
 
   componentDidMount() {
-    fetch(this.props.url)
+    fetch(this.props.apiUrl)
     .then(response => {
       return response.json();
     })
     .then(data => {
-      let image = (
-          <div key={data.message}>
-            <img src={data.message} alt={this.props.name} style={this.imageStyle}/>
-          </div>
-        )
-      this.setState({dogImage: image});
+      this.setState({ dogImageUrl: data.message })
     })
     .catch((error) => {
       console.error(error);
     });
   }
 
+  handleImageLoaded({target: img}) {
+    let adjWidth = ( imgHeight / img.offsetHeight ) * img.offsetWidth;
+    this.setState({imageWidth: adjWidth});
+  }
+
   render() {
-    return (
-      <div key={this.props.name} style={this.divStyle}>
-        {this.state.dogImage}
-      </div>
-    );
+    if (this.state.dogImageUrl === defaultDog) {
+      return (
+        <img src={this.state.dogImageUrl} alt={this.props.name}
+          style={{height: imgHeight}}
+        />
+      );
+    }
+    else
+      return (
+        <div key={this.state.dogImageUrl} style={{width: this.state.imageWidth + imgPad, height: imgHeight + imgPad}}>
+          <img src={this.state.dogImageUrl} alt={this.props.name}
+            onLoad={this.handleImageLoaded.bind(this)}
+            style={{width:this.state.imageWidth, height:imgHeight, border: '5px solid black'}}
+          />
+        </div>
+      );
   }
 }
 

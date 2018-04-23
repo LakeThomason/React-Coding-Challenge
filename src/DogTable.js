@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Flexbox from 'flexbox-react';
 import Dog from './Dog.js';
-import DogRow from './DogRow.js'
+import Lightbox from 'react-image-lightbox';
+import FlipMove from 'react-flip-move';
 import './App.css';
 
 
@@ -19,53 +20,31 @@ class DogTable extends Component {
       return response.json();
     })
     .then(data => {
-      let dogRowArray = [];
-      let row = [];
+      let dogArray = [];
       for (let breed in data.message) {
-        if (row.length === 3) {
-          dogRowArray.push(
-            <DogRow
-              row={row}
-            />
-          )
-          row = [];
-        }
         if (Object.keys(data.message[breed]).length === 0) {
-          row.push(
-            <Flexbox elmenent="div">
+          dogArray.push(
               <Dog
-                url={'https://dog.ceo/api/breed/' + breed + '/images/random'}
+                apiUrl={'https://dog.ceo/api/breed/' + breed + '/images/random'}
                 name={breed}
               />
-            </Flexbox>
           );
         }
         else {
           for (let subBreed in data.message[breed]) {
-            if (row.length === 3) {
-              dogRowArray.push(
-                <DogRow
-                  row={row}
-                />
-              )
-              row = [];
-            }
-            row.push(
-              <Flexbox element="div">
+            dogArray.push(
                 <Dog
-                  url={'https://dog.ceo/api/breed/'
+                  apiUrl={'https://dog.ceo/api/breed/'
                   + breed + "-"
                   + data.message[breed][subBreed]
                   + '/images/random'}
                   name={breed + ' ' + data.message[breed][subBreed]}
                 />
-              </Flexbox>
             );
           }
         }
       }
-
-      this.setState({doggies: dogRowArray});
+      this.setState({doggies: dogArray});
     })
     .catch((error) => {
       console.error(error);
@@ -75,7 +54,14 @@ class DogTable extends Component {
   render() {
     return (
       <div key="Table">
-        {this.state.doggies}
+        <Flexbox
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="center"
+          flexWrap="wrap"
+          >
+          {this.state.doggies}
+        </Flexbox>
       </div>
     );
   }
